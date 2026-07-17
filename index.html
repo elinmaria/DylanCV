@@ -180,6 +180,15 @@
   }
   .hero-contact:hover{ color:#fffa5e; }
 
+  @media (max-width: 600px){
+    .hero-contact{
+      left:50%;
+      right:auto;
+      transform:translateX(-50%);
+      top:2.5vh;
+    }
+  }
+
   .hero-share-wrap{
     position:fixed;
     right:3%;
@@ -245,7 +254,7 @@
   .printer-top{
     width:469px;
     max-width:86vw;
-    margin:-162px auto 0;
+    margin:max(-162px, -29.71vw) auto 0;
     position:relative;
     z-index:5;
     pointer-events:none;
@@ -293,7 +302,7 @@
 
   .print-btn-wrap{
     position:absolute;
-    top:188px;
+    top:min(188px, 34.47vw);
     left:50%;
     margin-left:-65px;
     z-index:1;
