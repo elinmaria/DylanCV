@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dylan Jones — CV Receipt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Permanent+Marker&family=Podkova:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #2b2924;
+    --ink-soft: #55524a;
+  }
+  *{box-sizing:border-box;}
+  html{ scroll-behavior:smooth; }
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:#000;
+    font-family:'Courier Prime', monospace;
+    color:var(--ink);
+  }
+
+  /* ---------- FIXED PHOTO BACKDROP ---------- */
+  .bg-fixed{
+    position:fixed;
+    inset:0;
+    z-index:0;
+  }
+  .bg-fixed img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:62% 38%;
+  }
+  .bg-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:none;
+  }
+  .bg-fixed.webgl-ready img{ visibility:hidden; }
+  .bg-fixed.webgl-ready .bg-canvas{ display:block; }
+  .bg-fixed::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.35) 100%);
+  }
+
+  .grain{
+    position:fixed;
+    inset:-100px;
+    z-index:0;
+    background-image:url('grain.png');
+    background-repeat:repeat;
+    background-size:400px 400px;
+    mix-blend-mode:multiply;
+    opacity:0.55;
+    pointer-events:none;
+    animation:grain-move 0.8s steps(4) infinite;
+  }
+  @keyframes grain-move{
+    0%   { transform:translate(0,0); }
+    25%  { transform:translate(-3%,2%); }
+    50%  { transform:translate(2%,-4%); }
+    75%  { transform:translate(-4%,-2%); }
+    100% { transform:translate(0,0); }
+  }
+
+  /* ---------- STAGE (everything that scrolls on top) ---------- */
+  .stage{
+    position:relative;
+    z-index:1;
+    max-width:900px;
+    margin:0 auto;
+    padding:6vh 0 140px;
+  }
+
+  .hero-name{
+    position:fixed;
+    z-index:1;
+    font-family:'Permanent Marker', cursive;
+    color:#fffa5e;
+    font-size:clamp(30px, 5vw, 62px);
+    line-height:1;
+    white-space:nowrap;
+    text-shadow:0 2px 6px rgba(0,0,0,0.35);
+    opacity:0;
+    animation:name-in 0.7s cubic-bezier(.2,.8,.3,1) both;
+  }
+  .hero-name.dylan{ left:2%; bottom:38vh; animation-delay:0.3s; }
+  .hero-name.jones{ left:11%; bottom:30vh; animation-delay:0.65s; }
+  @keyframes name-in{
+    from{ opacity:0; transform:rotate(-9.18deg) scale(0.6) translateY(14px); }
+    to{ opacity:1; transform:rotate(-9.18deg) scale(1) translateY(0); }
+  }
+
+  .music-toggle{
+    position:fixed;
+    left:5%;
+    bottom:5vh;
+    z-index:6;
+    width:52px;
+    height:52px;
+    background:none;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  }
+  .music-toggle img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .music-toggle img.off{ display:block; }
+  .music-toggle img.on{ display:none; }
+  .music-toggle.playing img.off{ display:none; }
+  .music-toggle.playing img.on{ display:block; }
+  .music-toggle.playing img.on{
+    animation:music-pulse 0.9s ease-in-out infinite;
+  }
+  @keyframes music-pulse{
+    0%, 100%{ transform:scale(1); }
+    50%{ transform:scale(1.12); }
+  }
+
+  .music-embed{
+    position:absolute;
+    left:-9999px;
+    top:-9999px;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+  }
+
+  .hero-cta{
+    position:fixed;
+    right:3%;
+    bottom:9vh;
+    z-index:1;
+    font-family:'Permanent Marker', cursive;
+    color:#fff;
+    font-size:clamp(14px, 1.6vw, 20px);
+    text-decoration:none;
+    letter-spacing:0.5px;
+    text-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .hero-cta:hover{ color:#fffa5e; }
+
+  .hero-contact{
+    position:fixed;
+    top:4vh;
+    right:5%;
+    z-index:1;
+    font-family:'Permanent Marker', cursive;
+    color:#fff;
+    font-size:clamp(14px, 1.6vw, 20px);
+    text-decoration:none;
+    letter-spacing:0.5px;
+    text-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .hero-contact:hover{ color:#fffa5e; }
+
+  .hero-share-wrap{
+    position:fixed;
+    right:3%;
+    bottom:15vh;
+    z-index:1;
+    display:flex;
+    align-items:center;
+  }
+  .hero-share{
+    position:relative;
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    font-family:'Permanent Marker', cursive;
+    color:#fff;
+    font-size:clamp(13px, 1.4vw, 18px);
+    letter-spacing:0.5px;
+    text-shadow:0 1px 4px rgba(0,0,0,0.5);
+  }
+  .hero-share:hover{ color:#fffa5e; }
+  .share-arrow{
+    position:absolute;
+    right:calc(100% - 4px);
+    bottom:6px;
+    width:110px;
+    height:80px;
+    opacity:0;
+    transform:rotate(-4deg) scale(0.9);
+    transform-origin:right bottom;
+    transition:opacity 0.25s ease, transform 0.25s ease;
+    pointer-events:none;
+  }
+  .hero-share-wrap:hover .share-arrow{
+    opacity:1;
+    transform:rotate(0deg) scale(1);
+  }
+  .share-arrow path{
+    stroke-dasharray:160;
+    stroke-dashoffset:160;
+    transition:stroke-dashoffset 0.7s ease;
+  }
+  .hero-share-wrap:hover .share-arrow path{
+    stroke-dashoffset:0;
+  }
+
+  /* ---------- PRINTER (body sits behind the paper) ---------- */
+  .printer-crop{
+    width:469px;
+    max-width:86vw;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+    filter:drop-shadow(0 16px 20px rgba(0,0,0,0.6));
+  }
+  .printer-crop img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  /* ---------- PRINTER TOP LIP (sits in front of the paper) ---------- */
+  .printer-top{
+    width:469px;
+    max-width:86vw;
+    margin:-162px auto 0;
+    position:relative;
+    z-index:5;
+    pointer-events:none;
+  }
+  .printer-top img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  /* ---------- RECEIPT (feeds out from the printer) ---------- */
+  .feed{
+    position:relative;
+    z-index:2;
+    margin-top:-20px;
+    overflow:hidden;
+  }
+  @keyframes feed-out{
+    0%   { transform: translateY(-100%); }
+    22%  { transform: translateY(-78%); }
+    30%  { transform: translateY(-78%); }
+    50%  { transform: translateY(-52%); }
+    58%  { transform: translateY(-52%); }
+    76%  { transform: translateY(-24%); }
+    83%  { transform: translateY(-24%); }
+    100% { transform: translateY(0%); }
+  }
+
+  .receipt-photo{
+    width:340px;
+    max-width:86vw;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+    box-shadow:0 18px 40px rgba(0,0,0,0.5);
+    background-image:url('CV-bg-trimmed2.png');
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+    padding:40px 26px 50px;
+    transform:translateY(-100%);
+  }
+  .receipt-photo.printed{
+    animation:feed-out 3.2s cubic-bezier(.34,0,.24,1) forwards;
+  }
+
+  .print-btn-wrap{
+    position:absolute;
+    top:188px;
+    left:50%;
+    margin-left:-65px;
+    z-index:1;
+    width:130px;
+    height:130px;
+    cursor:pointer;
+    user-select:none;
+    opacity:1;
+    pointer-events:auto;
+    filter:drop-shadow(0 10px 16px rgba(0,0,0,0.55));
+    transition:opacity 0.4s ease, transform 0.4s ease;
+  }
+  .print-btn-wrap.hidden{
+    opacity:0;
+    transform:scale(0.85);
+    pointer-events:none;
+  }
+  .print-btn-rim{
+    position:absolute;
+    inset:0;
+    background-image:url('rim-bg.png');
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+    pointer-events:none;
+  }
+  .print-btn-dome{
+    position:absolute;
+    inset:20px;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 30%, #c34848, #921E1E 55%, #5e1010 100%);
+    box-shadow:inset 0 -8px 14px rgba(0,0,0,0.45),
+               inset 0 6px 10px rgba(255,255,255,0.3),
+               0 3px 6px rgba(0,0,0,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    transition:transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease;
+  }
+  .print-btn-dome span{
+    font-family:'Podkova', serif;
+    font-weight:400;
+    color:#fff;
+    font-size:18px;
+    line-height:1.15;
+    letter-spacing:0.5px;
+  }
+  .print-btn-wrap.pressed .print-btn-dome{
+    transition:transform 0.06s ease-out, box-shadow 0.06s ease-out;
+    transform:translateY(5px) scale(0.93);
+    box-shadow:inset 0 6px 12px rgba(0,0,0,0.6),
+               inset 0 -2px 4px rgba(255,255,255,0.12),
+               0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  .ink-text{
+    filter:url(#inkRough);
+    text-shadow:0.5px 0.4px 0.4px rgba(43,41,36,0.38),
+                -0.4px -0.3px 0.45px rgba(43,41,36,0.24);
+  }
+  .ink-text p, .ink-text h2, .ink-text .job-row, .ink-text .job-venue,
+  .ink-text .job-desc, .ink-text .leader-row, .ink-text .meta-grid > div,
+  .ink-text .training-list, .ink-text .barcode-num{
+    will-change:transform;
+  }
+
+  .center{text-align:center;}
+  .stars-line{
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin:0 0 6px;
+  }
+  .title{
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:4px;
+    text-align:center;
+    margin:0 0 8px;
+  }
+  .subtitle{
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:2px;
+    text-align:center;
+    margin:0 0 6px;
+  }
+  .contact{
+    font-size:11px;
+    text-align:center;
+    line-height:1.6;
+    margin:14px 0 0;
+  }
+  hr{
+    border:none;
+    border-top:1px dashed #8a8578;
+    margin:16px 0;
+  }
+  .meta-grid{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    line-height:1.7;
+  }
+  .meta-grid .right{ text-align:right; }
+  h2{
+    font-size:12px;
+    letter-spacing:2px;
+    text-align:center;
+    margin:0 0 14px;
+    font-weight:700;
+  }
+  .job{ margin-bottom:14px; }
+  .job:last-child{ margin-bottom:0; }
+  .job-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-weight:700;
+    font-size:12.5px;
+  }
+  .job-venue{
+    font-size:11px;
+    margin:1px 0 3px;
+  }
+  .job-desc{
+    font-size:11px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    padding-left:10px;
+  }
+  .leader-row{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    font-size:11.5px;
+    margin-bottom:6px;
+  }
+  .leader-row:last-child{ margin-bottom:0; }
+  .leader-row .dots{
+    flex:1;
+    border-bottom:1px dotted var(--ink-soft);
+    margin-bottom:3px;
+  }
+  .leader-row.bold{ font-weight:700; }
+  .training-list{
+    text-align:center;
+    font-size:11px;
+    line-height:1.9;
+  }
+  .cash-row{
+    text-align:center;
+    font-size:11px;
+    margin-top:10px;
+  }
+  .stars{
+    text-align:center;
+    font-weight:700;
+    letter-spacing:1px;
+    font-size:11.5px;
+    margin:0 0 4px;
+  }
+  .barcode{
+    height:42px;
+    margin:16px auto 4px;
+    width:80%;
+    background-image:repeating-linear-gradient(
+      90deg,
+      var(--ink) 0px, var(--ink) 2px,
+      transparent 2px, transparent 3px,
+      var(--ink) 3px, var(--ink) 4px,
+      transparent 4px, transparent 6px,
+      var(--ink) 6px, var(--ink) 9px,
+      transparent 9px, transparent 11px
+    );
+  }
+  .barcode-num{
+    text-align:center;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg-fixed" id="bgFixed">
+    <img src="dylan-bg-web.jpg" alt="Dylan Jones" id="bgImg">
+    <canvas class="bg-canvas" id="bgCanvas"></canvas>
+  </div>
+  <div class="grain"></div>
+
+  <button class="music-toggle" type="button" id="musicToggle" aria-label="Play background music">
+    <img class="off" src="music-off.png" alt="">
+    <img class="on" src="music-on.png" alt="">
+  </button>
+  <div class="music-embed" id="musicEmbed"></div>
+
+  <div class="stage">
+
+    <span class="hero-name dylan">DYLAN</span>
+    <span class="hero-name jones">JONES</span>
+
+    <a class="hero-contact" href="mailto:jonesdylan611@gmail.com?subject=Job%20offer" target="_blank" rel="noopener">CONTACT</a>
+
+    <div class="hero-share-wrap">
+      <svg class="share-arrow" viewBox="0 0 110 80" fill="none" aria-hidden="true">
+        <path d="M96,74 C70,68 32,42 14,8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M25,17 L14,8 L15,22" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <button class="hero-share" type="button" id="shareBtn">Share this!</button>
+    </div>
+
+    <a class="hero-cta" href="DylanJonesCV.pdf" download="DylanJonesCV.pdf">DOWNLOAD CV</a>
+
+    <div class="printer-crop">
+      <img src="printer1.png" alt="">
+    </div>
+
+    <div class="printer-top">
+      <img src="printertop.png" alt="">
+    </div>
+
+    <div class="feed">
+      <div class="print-btn-wrap" id="printBtn">
+        <div class="print-btn-rim"></div>
+        <div class="print-btn-dome"><span>PRINT<br>CV</span></div>
+      </div>
+      <div class="receipt-photo">
+        <div class="ink-text">
+
+          <p class="stars-line">* * * * * * * * * * * * * * *</p>
+          <p class="title">DYLAN JONES</p>
+          <p class="subtitle">BAR SUPERVISOR</p>
+          <p class="stars-line">* * * * * * * * * * * * * * *</p>
+          <p class="contact">TEL: 07873 601637<br>jonesdylan611@gmail.com</p>
+
+          <hr>
+
+          <div class="meta-grid">
+            <div>ORDER #0001<br>SERVER: DYLAN</div>
+            <div class="right">TABLE: YOURS<br>NORTH WEST LONDON</div>
+          </div>
+
+          <hr>
+
+          <h2>/ EXPERIENCE /</h2>
+
+          <div class="job">
+            <div class="job-row"><span>SUPERVISOR</span><span>2025-NOW</span></div>
+            <div class="job-venue">THE BLACK LION</div>
+            <div class="job-desc">opening + closing the pub, running the bar team, stock</div>
+          </div>
+
+          <div class="job">
+            <div class="job-row"><span>BARTENDER</span><span>2024-25</span></div>
+            <div class="job-venue">TN1, TUNBRIDGE WELLS</div>
+            <div class="job-desc">cocktails, seasonal menus, quality + service</div>
+          </div>
+
+          <div class="job">
+            <div class="job-row"><span>SUPERVISOR</span><span>2023</span></div>
+            <div class="job-venue">MITCHELLS &amp; BUTLERS</div>
+            <div class="job-desc">stock takes, shadowing mgmt</div>
+          </div>
+
+          <div class="job">
+            <div class="job-row"><span>SUPERVISOR</span><span>2020-23</span></div>
+            <div class="job-venue">TIDALWAVE BARS</div>
+            <div class="job-desc">cellar mgmt, craft beer + breweries, trained new staff, events + weekly karaoke</div>
+          </div>
+
+          <div class="job">
+            <div class="job-row"><span>BAR STAFF</span><span>2019-20</span></div>
+            <div class="job-venue">GREENE KING</div>
+            <div class="job-desc">first pour. never looked back</div>
+          </div>
+
+          <hr>
+
+          <h2>/ SKILLS /</h2>
+          <div class="leader-row"><span>CELLAR MANAGEMENT</span><span class="dots"></span><span>x1</span></div>
+          <div class="leader-row"><span>STOCK CONTROL</span><span class="dots"></span><span>x1</span></div>
+          <div class="leader-row"><span>STAFF TRAINING</span><span class="dots"></span><span>x1</span></div>
+          <div class="leader-row"><span>COCKTAILS (TRAINED)</span><span class="dots"></span><span>x1</span></div>
+          <div class="leader-row"><span>CRAFT BEER KNOWLEDGE</span><span class="dots"></span><span>x99</span></div>
+          <div class="leader-row"><span>CUSTOMER SERVICE</span><span class="dots"></span><span>x1</span></div>
+
+          <hr>
+
+          <h2>/ TRAINING /</h2>
+          <div class="training-list">
+            LICENSING + REFUSAL OF SERVICE<br>
+            ALLERGENS / C.O.S.H.H.<br>
+            FIRE SAFETY / MANUAL HANDLING<br>
+            CELLAR + KITCHEN SAFETY<br>
+            SAFE TO WORK (PARTS 1 &amp; 2)
+          </div>
+
+          <hr>
+
+          <div class="leader-row"><span>SUBTOTAL</span><span class="dots"></span><span>7 YRS EXPERIENCE</span></div>
+          <div class="leader-row"><span>SERVICE</span><span class="dots"></span><span>ALWAYS INCLUDED</span></div>
+          <div class="leader-row bold"><span>TOTAL DUE</span><span class="dots"></span><span>ONE INTERVIEW</span></div>
+          <p class="cash-row">CASH [OK] &nbsp; CARD [OK] &nbsp; ROUNDS [OK]</p>
+
+          <hr>
+
+          <p class="stars">*** THANK YOU FOR HIRING ***</p>
+          <p class="stars">*** PLEASE COME AGAIN ***</p>
+
+          <div class="barcode"></div>
+          <p class="barcode-num">DYLAN*JONES</p>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <filter id="inkRough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.16" numOctaves="2" seed="7" result="noise"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+    </filter>
+  </svg>
+
+  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  <script>
+    var spotifyController = null;
+
+    function fadeInMusic(){
+      if(!spotifyController) return;
+      spotifyController.resume();
+    }
+
+    window.onSpotifyIframeApiReady = function(IFrameAPI){
+      var element = document.getElementById('musicEmbed');
+      var options = {
+        uri: 'spotify:track:0I0m4rf0wrlBJm3ozrfoOd',
+        width: '1',
+        height: '1'
+      };
+      IFrameAPI.createController(element, options, function(controller){
+        spotifyController = controller;
+        var btn = document.getElementById('musicToggle');
+        controller.addListener('playback_update', function(e){
+          if(btn){ btn.classList.toggle('playing', !e.data.isPaused); }
+        });
+      });
+    };
+
+    (function(){
+      var musicBtn = document.getElementById('musicToggle');
+      if(musicBtn){
+        musicBtn.addEventListener('click', function(){
+          if(spotifyController){ spotifyController.togglePlay(); }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var shareBtn = document.getElementById('shareBtn');
+      if(shareBtn){
+        shareBtn.addEventListener('click', function(){
+          var shareData = { title:'Dylan Jones — Bar Supervisor', text:'Check out my CV', url: location.href };
+          if(navigator.share){
+            navigator.share(shareData).catch(function(){});
+          } else if(navigator.clipboard){
+            navigator.clipboard.writeText(location.href).then(function(){
+              var original = shareBtn.textContent;
+              shareBtn.textContent = 'Link copied!';
+              setTimeout(function(){ shareBtn.textContent = original; }, 1800);
+            });
+          }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var root = document.querySelector('.ink-text');
+      if(!root) return;
+      var targets = root.querySelectorAll('p, h2, .job-row, .job-venue, .job-desc, .leader-row, .meta-grid > div, .training-list, .barcode-num');
+      targets.forEach(function(t){
+        var rot = (Math.random()*0.7 - 0.35).toFixed(2);
+        var ty  = (Math.random()*1.0 - 0.5).toFixed(2);
+        t.style.transformOrigin = 'left center';
+        t.style.transform = 'rotate(' + rot + 'deg) translateY(' + ty + 'px)';
+      });
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var btn = document.getElementById('printBtn');
+      var receipt = document.querySelector('.receipt-photo');
+      if(!btn || !receipt) return;
+
+      var printSound = new Audio('printer-sound.mp3');
+      printSound.preload = 'auto';
+
+      function press(){ btn.classList.add('pressed'); }
+      function release(){ btn.classList.remove('pressed'); }
+
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('mouseleave', release);
+      btn.addEventListener('touchstart', function(e){ press(); }, { passive:true });
+      btn.addEventListener('touchend', release);
+
+      btn.addEventListener('click', function(){
+        receipt.classList.add('printed');
+        printSound.currentTime = 0;
+        printSound.play().catch(function(){});
+        if(typeof fadeInMusic === 'function'){ fadeInMusic(); }
+      });
+    })();
+  </script>
+
+  <script>
+    (function(){
+      var canvas = document.getElementById('bgCanvas');
+      var img = document.getElementById('bgImg');
+      var wrap = document.getElementById('bgFixed');
+      if(!canvas || !img) return;
+
+      var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if(!gl) return;
+
+      var VERT = 'attribute vec2 a_pos;' +
+        'varying vec2 v_uv;' +
+        'void main(){ v_uv = a_pos * 0.5 + 0.5; gl_Position = vec4(a_pos,0.0,1.0); }';
+
+      var FRAG = 'precision mediump float;' +
+        'varying vec2 v_uv;' +
+        'uniform sampler2D u_tex;' +
+        'uniform vec2 u_canvasSize;' +
+        'uniform vec2 u_uvScale;' +
+        'uniform vec2 u_uvOffset;' +
+        'uniform vec2 u_points[24];' +
+        'uniform float u_ages[24];' +
+        'uniform int u_count;' +
+        'void main(){' +
+        '  vec2 fragPx = v_uv * u_canvasSize;' +
+        '  vec2 disp = vec2(0.0);' +
+        '  for(int i=0; i<24; i++){' +
+        '    if(i >= u_count) break;' +
+        '    vec2 d = fragPx - u_points[i];' +
+        '    float dist = length(d) + 0.0001;' +
+        '    float age = u_ages[i];' +
+        '    float amp = 7.0 * exp(-age*3.2) * exp(-dist*0.022);' +
+        '    float wave = sin(dist*0.035 - age*6.0);' +
+        '    disp += (d/dist) * amp * wave;' +
+        '  }' +
+        '  vec2 basePx = fragPx + disp;' +
+        '  vec2 uvR = (basePx*1.00) * u_uvScale + u_uvOffset;' +
+        '  vec2 uvG = (basePx*0.994) * u_uvScale + u_uvOffset;' +
+        '  vec2 uvB = (basePx*0.988) * u_uvScale + u_uvOffset;' +
+        '  float r = texture2D(u_tex, uvR).r;' +
+        '  float g = texture2D(u_tex, uvG).g;' +
+        '  float b = texture2D(u_tex, uvB).b;' +
+        '  gl_FragColor = vec4(r,g,b,1.0);' +
+        '}';
+
+      function compile(type, src){
+        var s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){
+          console.warn('shader error', gl.getShaderInfoLog(s));
+          return null;
+        }
+        return s;
+      }
+
+      var vs = compile(gl.VERTEX_SHADER, VERT);
+      var fs = compile(gl.FRAGMENT_SHADER, FRAG);
+      if(!vs || !fs) return;
+
+      var program = gl.createProgram();
+      gl.attachShader(program, vs);
+      gl.attachShader(program, fs);
+      gl.linkProgram(program);
+      if(!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+      gl.useProgram(program);
+
+      var quad = new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+      var buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
+      var posLoc = gl.getAttribLocation(program, 'a_pos');
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+      var u_tex = gl.getUniformLocation(program, 'u_tex');
+      var u_canvasSize = gl.getUniformLocation(program, 'u_canvasSize');
+      var u_uvScale = gl.getUniformLocation(program, 'u_uvScale');
+      var u_uvOffset = gl.getUniformLocation(program, 'u_uvOffset');
+      var u_points = gl.getUniformLocation(program, 'u_points');
+      var u_ages = gl.getUniformLocation(program, 'u_ages');
+      var u_count = gl.getUniformLocation(program, 'u_count');
+
+      var texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+      var imageSize = { w:1, h:1 };
+      var dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+
+      function uploadTexture(){
+        imageSize.w = img.naturalWidth || 1;
+        imageSize.h = img.naturalHeight || 1;
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        wrap.classList.add('webgl-ready');
+        resize();
+        requestAnimationFrame(render);
+      }
+
+      function resize(){
+        var w = window.innerWidth, h = window.innerHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+
+        var scale = Math.max(canvas.width / imageSize.w, canvas.height / imageSize.h);
+        var displayW = imageSize.w * scale;
+        var displayH = imageSize.h * scale;
+        var offsetX = (displayW - canvas.width) * 0.62;
+        var offsetY = (displayH - canvas.height) * 0.38;
+
+        gl.useProgram(program);
+        gl.uniform2f(u_canvasSize, canvas.width, canvas.height);
+        gl.uniform2f(u_uvScale, 1/displayW, 1/displayH);
+        gl.uniform2f(u_uvOffset, offsetX/displayW, offsetY/displayH);
+      }
+
+      var points = [];
+      var MAX_POINTS = 24;
+      var lastPush = 0;
+
+      function pushPoint(clientX, clientY){
+        var now = performance.now();
+        if(now - lastPush < 22) return;
+        lastPush = now;
+        points.push({ x: clientX*dpr, y:(window.innerHeight-clientY)*dpr, t: now });
+        if(points.length > MAX_POINTS) points.shift();
+      }
+
+      window.addEventListener('mousemove', function(e){ pushPoint(e.clientX, e.clientY); });
+      window.addEventListener('touchmove', function(e){
+        if(e.touches && e.touches[0]) pushPoint(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive:true });
+      window.addEventListener('resize', resize);
+
+      var ptData = new Float32Array(MAX_POINTS*2);
+      var ageData = new Float32Array(MAX_POINTS);
+
+      function render(){
+        var now = performance.now();
+        while(points.length && (now - points[0].t) > 1600){ points.shift(); }
+
+        var count = points.length;
+        for(var i=0;i<count;i++){
+          ptData[i*2] = points[i].x;
+          ptData[i*2+1] = points[i].y;
+          ageData[i] = (now - points[i].t) / 1000;
+        }
+
+        gl.useProgram(program);
+        gl.uniform2fv(u_points, ptData);
+        gl.uniform1fv(u_ages, ageData);
+        gl.uniform1i(u_count, count);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(u_tex, 0);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        requestAnimationFrame(render);
+      }
+
+      if(img.complete && img.naturalWidth){
+        uploadTexture();
+      } else {
+        img.addEventListener('load', uploadTexture);
+      }
+    })();
+  </script>
+
+</body>
+</html>
