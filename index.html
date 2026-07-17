@@ -107,14 +107,14 @@
 
   @media (max-width: 600px){
     .hero-name{
-      left:0;
-      right:0;
-      width:100%;
-      text-align:center;
-      font-size:clamp(46px, 13vw, 70px);
+      left:auto;
+      right:auto;
+      width:auto;
+      text-align:left;
+      font-size:clamp(50px, 15vw, 80px);
     }
-    .hero-name.dylan{ left:0; bottom:40vh; }
-    .hero-name.jones{ left:0; bottom:31vh; }
+    .hero-name.dylan{ left:-1%; bottom:40vh; }
+    .hero-name.jones{ left:18%; bottom:29vh; }
   }
   @keyframes name-in{
     from{ opacity:0; transform:rotate(-9.18deg) scale(0.6) translateY(14px); }
@@ -178,6 +178,14 @@
   }
   .hero-cta:hover{ color:#fffa5e; }
 
+  @media (max-width: 600px){
+    .hero-cta{
+      left:50%;
+      right:auto;
+      transform:translateX(-50%);
+    }
+  }
+
   .hero-contact{
     position:fixed;
     top:4vh;
@@ -197,7 +205,7 @@
       left:50%;
       right:auto;
       transform:translateX(-50%);
-      top:calc(2.5vh + 5px);
+      top:calc(2.5vh + 18px);
     }
   }
 
@@ -208,6 +216,13 @@
     z-index:1;
     display:flex;
     align-items:center;
+  }
+  @media (max-width: 600px){
+    .hero-share-wrap{
+      left:50%;
+      right:auto;
+      transform:translateX(-50%);
+    }
   }
   .hero-share{
     position:relative;
@@ -257,7 +272,7 @@
     filter:drop-shadow(0 16px 20px rgba(0,0,0,0.6));
   }
   @media (max-width: 600px){
-    .printer-crop{ margin-top:-5px; }
+    .printer-crop{ margin-top:-5px; max-width:94vw; }
   }
   .printer-crop img{
     display:block;
@@ -278,6 +293,9 @@
     display:block;
     width:100%;
     height:auto;
+  }
+  @media (max-width: 600px){
+    .printer-top{ max-width:94vw; margin-top:max(-162px, -32.46vw); }
   }
 
   /* ---------- RECEIPT (feeds out from the printer) ---------- */
