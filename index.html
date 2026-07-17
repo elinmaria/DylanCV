@@ -7,6 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Permanent+Marker&family=Podkova:wght@600;800&display=swap" rel="stylesheet">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GZRS6SHEM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7GZRS6SHEM');
+</script>
+
 <style>
   :root{
     --ink: #2b2924;
@@ -649,9 +660,27 @@
 
   <script>
     (function(){
+      var downloadLink = document.querySelector('.hero-cta');
+      if(downloadLink){
+        downloadLink.addEventListener('click', function(){
+          if(typeof gtag === 'function'){ gtag('event', 'download_cv'); }
+        });
+      }
+      var contactLink = document.querySelector('.hero-contact');
+      if(contactLink){
+        contactLink.addEventListener('click', function(){
+          if(typeof gtag === 'function'){ gtag('event', 'contact_click'); }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    (function(){
       var shareBtn = document.getElementById('shareBtn');
       if(shareBtn){
         shareBtn.addEventListener('click', function(){
+          if(typeof gtag === 'function'){ gtag('event', 'share_click'); }
           var shareData = { title:'Dylan Jones — Bar Supervisor', text:'Check out my CV', url: location.href };
           if(navigator.share){
             navigator.share(shareData).catch(function(){});
@@ -704,6 +733,7 @@
         printSound.currentTime = 0;
         printSound.play().catch(function(){});
         if(typeof fadeInMusic === 'function'){ fadeInMusic(); }
+        if(typeof gtag === 'function'){ gtag('event', 'print_cv'); }
       });
     })();
   </script>
@@ -739,14 +769,14 @@
         '    vec2 d = fragPx - u_points[i];' +
         '    float dist = length(d) + 0.0001;' +
         '    float age = u_ages[i];' +
-        '    float amp = 7.0 * exp(-age*3.2) * exp(-dist*0.022);' +
+        '    float amp = 9.5 * exp(-age*2.9) * exp(-dist*0.019);' +
         '    float wave = sin(dist*0.035 - age*6.0);' +
         '    disp += (d/dist) * amp * wave;' +
         '  }' +
         '  vec2 basePx = fragPx + disp;' +
         '  vec2 uvR = (basePx*1.00) * u_uvScale + u_uvOffset;' +
-        '  vec2 uvG = (basePx*0.994) * u_uvScale + u_uvOffset;' +
-        '  vec2 uvB = (basePx*0.988) * u_uvScale + u_uvOffset;' +
+        '  vec2 uvG = (basePx*0.991) * u_uvScale + u_uvOffset;' +
+        '  vec2 uvB = (basePx*0.982) * u_uvScale + u_uvOffset;' +
         '  float r = texture2D(u_tex, uvR).r;' +
         '  float g = texture2D(u_tex, uvG).g;' +
         '  float b = texture2D(u_tex, uvB).b;' +
