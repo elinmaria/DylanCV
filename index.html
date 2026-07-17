@@ -691,11 +691,12 @@
   <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
   <script>
     var spotifyController = null;
+    var pendingSeekToStart = false;
 
     function fadeInMusic(){
       if(!spotifyController) return;
+      pendingSeekToStart = true;
       spotifyController.resume();
-      spotifyController.seek(79); // start at 1:19
     }
 
     window.onSpotifyIframeApiReady = function(IFrameAPI){
@@ -710,6 +711,10 @@
         var btn = document.getElementById('musicToggle');
         controller.addListener('playback_update', function(e){
           if(btn){ btn.classList.toggle('playing', !e.data.isPaused); }
+          if(pendingSeekToStart && !e.data.isPaused){
+            pendingSeekToStart = false;
+            controller.seek(0);
+          }
         });
       });
     };
