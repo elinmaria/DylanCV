@@ -104,6 +104,18 @@
   }
   .hero-name.dylan{ left:2%; bottom:38vh; animation-delay:0.3s; }
   .hero-name.jones{ left:11%; bottom:30vh; animation-delay:0.65s; }
+
+  @media (max-width: 600px){
+    .hero-name{
+      left:0;
+      right:0;
+      width:100%;
+      text-align:center;
+      font-size:clamp(46px, 13vw, 70px);
+    }
+    .hero-name.dylan{ left:0; bottom:40vh; }
+    .hero-name.jones{ left:0; bottom:31vh; }
+  }
   @keyframes name-in{
     from{ opacity:0; transform:rotate(-9.18deg) scale(0.6) translateY(14px); }
     to{ opacity:1; transform:rotate(-9.18deg) scale(1) translateY(0); }
@@ -185,7 +197,7 @@
       left:50%;
       right:auto;
       transform:translateX(-50%);
-      top:2.5vh;
+      top:calc(2.5vh + 5px);
     }
   }
 
@@ -244,6 +256,9 @@
     z-index:1;
     filter:drop-shadow(0 16px 20px rgba(0,0,0,0.6));
   }
+  @media (max-width: 600px){
+    .printer-crop{ margin-top:-5px; }
+  }
   .printer-crop img{
     display:block;
     width:100%;
@@ -295,6 +310,14 @@
     background-repeat:no-repeat;
     padding:40px 26px 50px;
     transform:translateY(-100%);
+  }
+
+  @media (max-width: 600px){
+    .receipt-photo{
+      width:300px;
+      max-width:76vw;
+      padding:34px 20px 44px;
+    }
   }
   .receipt-photo.printed{
     animation:feed-out 3.2s cubic-bezier(.34,0,.24,1) forwards;
