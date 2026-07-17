@@ -107,14 +107,14 @@
 
   @media (max-width: 600px){
     .hero-name{
-      left:auto;
-      right:auto;
-      width:auto;
-      text-align:left;
-      font-size:clamp(50px, 15vw, 80px);
+      left:0;
+      right:0;
+      width:100%;
+      text-align:center;
+      font-size:clamp(46px, 14vw, 72px);
     }
-    .hero-name.dylan{ left:-1%; bottom:40vh; }
-    .hero-name.jones{ left:18%; bottom:29vh; }
+    .hero-name.dylan{ left:0; bottom:35vh; }
+    .hero-name.jones{ left:0; bottom:28vh; }
   }
   @keyframes name-in{
     from{ opacity:0; transform:rotate(-9.18deg) scale(0.6) translateY(14px); }
@@ -168,10 +168,10 @@
     position:fixed;
     right:3%;
     bottom:9vh;
-    z-index:1;
+    z-index:6;
     font-family:'Permanent Marker', cursive;
     color:#fff;
-    font-size:clamp(14px, 1.6vw, 20px);
+    font-size:clamp(17px, 1.92vw, 24px);
     text-decoration:none;
     letter-spacing:0.5px;
     text-shadow:0 1px 4px rgba(0,0,0,0.5);
@@ -190,10 +190,10 @@
     position:fixed;
     top:4vh;
     right:5%;
-    z-index:1;
+    z-index:6;
     font-family:'Permanent Marker', cursive;
     color:#fff;
-    font-size:clamp(14px, 1.6vw, 20px);
+    font-size:clamp(17px, 1.92vw, 24px);
     text-decoration:none;
     letter-spacing:0.5px;
     text-shadow:0 1px 4px rgba(0,0,0,0.5);
@@ -213,7 +213,7 @@
     position:fixed;
     right:3%;
     bottom:15vh;
-    z-index:1;
+    z-index:6;
     display:flex;
     align-items:center;
   }
@@ -232,7 +232,7 @@
     cursor:pointer;
     font-family:'Permanent Marker', cursive;
     color:#fff;
-    font-size:clamp(13px, 1.4vw, 18px);
+    font-size:clamp(16px, 1.68vw, 22px);
     letter-spacing:0.5px;
     text-shadow:0 1px 4px rgba(0,0,0,0.5);
   }
