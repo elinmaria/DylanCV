@@ -168,13 +168,20 @@
     position:fixed;
     right:3%;
     bottom:9vh;
-    z-index:6;
+    z-index:1;
     font-family:'Permanent Marker', cursive;
     color:#fff;
     font-size:clamp(17px, 1.92vw, 24px);
     text-decoration:none;
     letter-spacing:0.5px;
     text-shadow:0 1px 4px rgba(0,0,0,0.5);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.6s ease;
+  }
+  .hero-cta.revealed{
+    opacity:1;
+    pointer-events:auto;
   }
   .hero-cta:hover{ color:#fffa5e; }
 
@@ -222,6 +229,14 @@
       left:50%;
       right:auto;
       transform:translateX(-50%);
+      z-index:1;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.6s ease;
+    }
+    .hero-share-wrap.revealed{
+      opacity:1;
+      pointer-events:auto;
     }
   }
   .hero-share{
@@ -680,6 +695,7 @@
     function fadeInMusic(){
       if(!spotifyController) return;
       spotifyController.resume();
+      spotifyController.seek(79); // start at 1:19
     }
 
     window.onSpotifyIframeApiReady = function(IFrameAPI){
@@ -784,6 +800,10 @@
         printSound.play().catch(function(){});
         if(typeof fadeInMusic === 'function'){ fadeInMusic(); }
         if(typeof gtag === 'function'){ gtag('event', 'print_cv'); }
+        var downloadLink = document.querySelector('.hero-cta');
+        if(downloadLink){ downloadLink.classList.add('revealed'); }
+        var shareWrap = document.querySelector('.hero-share-wrap');
+        if(shareWrap){ shareWrap.classList.add('revealed'); }
       });
     })();
   </script>
